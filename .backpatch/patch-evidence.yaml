@@ -1,0 +1,21 @@
+schema: osera-patch-evidence/0.1.0
+producer: moderne
+release: 1.1.3.1-backpatch-00001
+baseline: v1.1.3+backpatch.baseline
+fixes:
+  - cve: CVE-2021-33813
+    upstream_fix_url: https://github.com/hunterhacker/jdom/commit/dd4f3c2fc7893edd914954c73eb577f925a7d361
+    advisory_url: https://nvd.nist.gov/vuln/detail/CVE-2021-33813
+    patch_commit_url: https://github.com/moderne-backpatch-alliance/backpatch-jdom/commit/343184b
+    basis: adapted
+    artifacts:
+      - org.jdom:jdom
+    note: New in this release; ported onto 1.1.3; fixed at 1.1.3.1-backpatch-00001 (backpatch-jdom@343184b).
+tests:
+  commit: 343184b0670b359b5ffde3c5c644b4fbaa29339a
+  command: ant build.core build.test with the tag's own Ant 1.5.2 (core/lib/ant.jar), -Dversion=1.1.3, in a Linux arm64 container (azul/zulu-openjdk:8); the report decides
+  runtime: openjdk version 1.8.0_512 (Zulu 8.98.0.111, Linux aarch64, container azul/zulu-openjdk:8), Apache Ant 1.5.2 of the repository
+  report: jdom-1.1.3.1-backpatch-00001-tests.zip
+  report_sha256: 738c3f86d01e7c537e78dc96ccd5cde6947ee725cc463b9d7bfe4f9f4319569d
+  result: pass
+  note: "276 tests at the patch commit, 0 of them skipped by the suite, 0 failed, 0 errors. The suite of record ran in a Linux arm64 container (azul/zulu-openjdk:8): on macOS TestSAXBuilder#testBuildString is red with and without the fix (the /var versus /private/var base URI), the avro-1.9 precedent."
