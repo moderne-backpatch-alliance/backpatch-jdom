@@ -442,6 +442,11 @@ public class SAXBuilder {
     public void setFeature(String name, boolean value) {
         // Save the specified feature for later.
         features.put(name, value ? Boolean.TRUE : Boolean.FALSE);
+        if ("http://xml.org/sax/features/external-general-entities".equals(name)) {
+            // See issue https://github.com/hunterhacker/jdom/issues/189
+            // And PR https://github.com/hunterhacker/jdom/pull/188
+            setExpandEntities(value);
+        }
     }
 
     /**

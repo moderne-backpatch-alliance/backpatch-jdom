@@ -1085,5 +1085,46 @@ extends junit.framework.TestCase
 		}
 	}
 
+	private static final String EXTERNAL_GENERAL_ENTITIES =
+		"http://xml.org/sax/features/external-general-entities";
+
+	private Document buildWithExternalEntity(SAXBuilder builder) throws Exception {
+		File ent = File.createTempFile("tst", ".txt");
+		ent.deleteOnExit();
+		try {
+			FileWriter fw = new FileWriter(ent);
+			fw.write("externalmarker");
+			fw.close();
+			String xml = "<?xml version=\"1.0\"?>"
+				+ "<!DOCTYPE root [<!ENTITY ext SYSTEM \""
+				+ ent.getCanonicalFile().toURI().toURL().toString() + "\">]>"
+				+ "<root>&ext;</root>";
+			return builder.build(new CharArrayReader(xml.toCharArray()));
+		} finally {
+			ent.delete();
+		}
+	}
+
+	public void testExternalGeneralEntitiesExpandedByDefault() throws Exception {
+		Document doc = buildWithExternalEntity(new SAXBuilder());
+		assertEquals("externalmarker", doc.getRootElement().getText());
+	}
+
+	public void testSetFeatureExternalGeneralEntitiesFalse() throws Exception {
+		SAXBuilder builder = new SAXBuilder();
+		builder.setFeature(EXTERNAL_GENERAL_ENTITIES, false);
+		Document doc = buildWithExternalEntity(builder);
+		assertEquals("", doc.getRootElement().getText());
+		assertFalse(builder.getExpandEntities());
+	}
+
+	public void testSetFeatureExternalGeneralEntitiesTrue() throws Exception {
+		SAXBuilder builder = new SAXBuilder();
+		builder.setExpandEntities(false);
+		builder.setFeature(EXTERNAL_GENERAL_ENTITIES, true);
+		Document doc = buildWithExternalEntity(builder);
+		assertEquals("externalmarker", doc.getRootElement().getText());
+		assertTrue(builder.getExpandEntities());
+	}
 
 }
